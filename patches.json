@@ -1,0 +1,85 @@
+{
+  "CameraHWConfiguration.config": {
+    "device_path": "odm/etc/camera/CameraHWConfiguration.config",
+    "stock_sha256": "d199ecc85d4b2a59be0ed6d2c871e5cdccf5c0405ce66c2dce8437c51f2d3d8b",
+    "patched_sha256": "7480262c84246bace5c4d57c440b232bf903def923eff6cff14f7db00c5faf42",
+    "edits": [
+      {
+        "offset": 18082,
+        "before": "",
+        "after": "20202020496d61676553697a65735b34305d203d2020373638303b203433323020202020232031363a3920202020202020202020384b205548440a20202020496d61676553697a65735b34315d203d2020323034383b203131353220202020232031363a39202020202020202020204c59542d38303820484652206f75747075740a"
+      },
+      {
+        "offset": 51215,
+        "before": "2020202053797374656d43616d657261203d2020303b2020303b2020303b2020313b2020303b20313b0a",
+        "after": "2020202053797374656d43616d657261203d2020303b2020303b2020303b2020303b2020303b20303b0a"
+      }
+    ]
+  },
+  "camera.qcom.sm8650.so": {
+    "device_path": "vendor/lib64/hw/camera.qcom.sm8650.so",
+    "stock_sha256": "5a221fe94e6e4134158275bb4c92cdcb22426a8a27069e30c60d3a7aee92433d",
+    "patched_sha256": "318812211b84db1828bc9ce8638c83ed01d8f18e65922e58040fe1ca730218f5",
+    "edits": [
+      {
+        "offset": 2637109,
+        "before": "0f00007008",
+        "after": "0800008004"
+      },
+      {
+        "offset": 2637120,
+        "before": "7800000004",
+        "after": "e001000010"
+      },
+      {
+        "offset": 2637129,
+        "before": "0f00007008",
+        "after": "0800008004"
+      },
+      {
+        "offset": 2637140,
+        "before": "7800000004",
+        "after": "e001000010"
+      },
+      {
+        "offset": 2637149,
+        "before": "0f000070080000780000007800000004",
+        "after": "08000080040000e0010000e001000010"
+      }
+    ]
+  },
+  "com.qti.sensor.lyt808.so": {
+    "device_path": "odm/lib64/camera/com.qti.sensor.lyt808.so",
+    "stock_sha256": "0c6a7318f20ef6d15642fc79b69a3eb609d6ebaeae1958f74d23f4e0544dcb74",
+    "patched_sha256": "2ae9493cbf5862387b1906c511a210ecb66c1138bbf24ae604a934d5bd52cd6c",
+    "edits": [
+      {
+        "offset": 8752,
+        "before": "a020221e087840b91710221ee9d79f1a1f050071e30e211ee51389",
+        "after": "087840b91f050071e414221e1710221ee30e211ea404221ee5d79f"
+      }
+    ]
+  },
+  "lyt808-raw50.bin": {
+    "device_path": "odm/lib64/camera/com.qti.sensormodule.sunny_lyt808.bin",
+    "stock_sha256": "df921ea87cfb2bd627f9926733658b2efebc3cf733338fd986e1ace3155d5f98",
+    "patched_sha256": "fa8e77fc2a8301e97bf6a4f59322a6c557d85cf1d6926a95b150701551c29b4c",
+    "edits": [
+      {
+        "offset": 239623,
+        "before": "9c01",
+        "after": "2b03"
+      },
+      {
+        "offset": 247463,
+        "before": "6422",
+        "after": "2b03"
+      },
+      {
+        "offset": 426527,
+        "before": "e0382621",
+        "after": "76a53a79"
+      }
+    ]
+  }
+}
