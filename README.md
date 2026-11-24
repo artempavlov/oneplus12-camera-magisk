@@ -20,13 +20,29 @@ The app must select the mode. The module does not add menus or controls to camer
 
 Do not install this ZIP on other firmware builds. Disable the module before an OTA update. The module checks the build ID and file checksums before it applies the changes. It does not write to `vendor` or `odm`.
 
-## Install
+## Quick start
 
-1. Check the model and firmware build in Settings.
-2. Download `PJD110-Camera-Unified-v5.zip` from [Releases](../../releases/tag/v5.0).
-3. Open **Magisk → Modules → Install from storage**.
-4. Select the ZIP.
-5. Reboot when Magisk reports success.
+Use Python 3 and [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools).
+Make sure `adb` is on your computer's `PATH`.
+
+1. Download and extract this repository with **Code → Download ZIP**, or clone it.
+2. Enable USB debugging on the supported OnePlus 12.
+3. Connect the phone by USB and accept the debugging prompt.
+4. From the repository folder, run:
+
+   ```sh
+   python3 build.py --from-phone
+   ```
+
+   On Windows, use `py -3 build.py --from-phone` if Python uses the `py` launcher.
+
+5. Copy `dist/PJD110-Camera-Unified-v5.zip` to the phone.
+6. In **Magisk → Modules → Install from storage**, select that ZIP.
+7. Reboot when Magisk reports success.
+
+The build command reads four files over ADB and checks their SHA-256 hashes. It does not use root, install the module, or reboot the phone. The GitHub source ZIP is not an installer.
+
+If ADB shows multiple devices, add `--serial SERIAL` with the serial from `adb devices`. If a camera overlay is active, disable it and reboot before trying again. If ADB cannot read the files, use the [manual build](#build-from-stock-files). Do not skip the checksum checks.
 
 Do not use this module with unrelated camera overlays. Version 5 keeps module ID `pjd110_camera2_raw50`. The installer retires the known Camera Aux v3 if its files match.
 
