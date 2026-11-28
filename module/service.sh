@@ -79,6 +79,7 @@ main() {
     [ "$ready" = 1 ] || skip 'camera did not become idle'
     [ "$(layers)" = 0 ] && [ "$(hash "$target")" = "$stock" ] && [ "$(hash "$profile")" = "$full" ] || skip 'profile mismatch or existing mount'
     unused || skip 'existing RAW size override'
+    sh "$dir/vector-ready.sh" || skip 'stock camera photo compatibility is not ready'
     chcon u:object_r:vendor_file:s0 "$profile" || skip 'cannot label profile'
     enabled && idle || skip 'camera in use or module disabled'
     : > "$dir/.activating"

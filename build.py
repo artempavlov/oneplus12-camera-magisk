@@ -7,14 +7,14 @@ import json
 import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
-from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile, ZipInfo
 
 
 ROOT = Path(__file__).resolve().parent
 SUPPORTED_BUILD = 'PJD110_16.0.2.400(CN01)'
 MODULE_FILES = (
     'check-map.awk', 'customize.sh', 'module.prop',
-    'post-fs-data.sh', 'service.sh', 'skip_mount',
+    'post-fs-data.sh', 'service.sh', 'skip_mount', 'vector-ready.sh',
 )
 
 
@@ -48,9 +48,10 @@ def patch_specs():
     return json.loads((ROOT / 'patches.json').read_text(encoding='utf-8'))
 
 
-def build(stock):
+def build(stock, photo_compat_hash):
     specs = patch_specs()
     files = {name: (ROOT / 'module' / name).read_bytes() for name in MODULE_FILES}
+    files['photo-compat.sha256'] = (photo_compat_hash + '\n').encode('ascii')
     files.update((name, patch_file(stock, name, spec)) for name, spec in specs.items())
     files['contents.sha256'] = ''.join(
         f'{sha256(data)}  {name}\n' for name, data in sorted(files.items()) if name != 'customize.sh'
@@ -65,7 +66,7 @@ def build(stock):
     return output.getvalue()
 
 
-def build_from_phone(serial):
+def build_from_phone(serial, photo_compat_hash):
     adb = ['adb', '-s', serial] if serial else ['adb']
 
     def run(*args):
@@ -88,7 +89,7 @@ def build_from_phone(serial):
             source = PurePosixPath(spec['device_path'])
             print(f'Reading /{source}', flush=True)
             run('pull', f'/{source}', str(stock / source.name))
-        return build(stock)
+        return build(stock, photo_compat_hash)
 
 
 def main():
@@ -97,7 +98,8 @@ def main():
     source.add_argument('--stock', type=Path, help='Directory of stock files')
     source.add_argument('--from-phone', action='store_true', help='Read stock files over ADB')
     parser.add_argument('--serial', help='ADB serial number when using --from-phone')
-    parser.add_argument('--output', type=Path, default=Path('dist/PJD110-Camera-Unified-v5.zip'),
+    parser.add_argument('--photo-compat', type=Path, required=True, help='Locally built Photo Compatibility APK')
+    parser.add_argument('--output', type=Path, default=Path('dist/PJD110-Camera-Unified-v6.zip'),
                         help='Path for the new ZIP (default: %(default)s)')
     args = parser.parse_args()
     if args.serial and not args.from_phone:
@@ -105,7 +107,12 @@ def main():
     try:
         if args.output.exists():
             raise FileExistsError(f'{args.output} already exists. Choose another --output path.')
-        data = build_from_phone(args.serial) if args.from_phone else build(args.stock)
+        with ZipFile(args.photo_compat) as apk:
+            if apk.read('assets/xposed_init').strip() != b'local.pjd110.photocompat.PhotoCompat':
+                raise ValueError('Expected the Photo Compatibility APK built by photo-compat/build.sh')
+        photo_compat_hash = sha256(args.photo_compat.read_bytes())
+        data = (build_from_phone(args.serial, photo_compat_hash) if args.from_phone
+                else build(args.stock, photo_compat_hash))
         args.output.parent.mkdir(parents=True, exist_ok=True)
         with args.output.open('xb') as target:
             target.write(data)
@@ -115,7 +122,7 @@ def main():
         parser.exit(1, f'Build failed: {err}\n')
     except subprocess.TimeoutExpired:
         parser.exit(1, 'Build failed: ADB timed out. Check the USB connection and authorization.\n')
-    except (OSError, ValueError) as err:
+    except (OSError, ValueError, KeyError, BadZipFile) as err:
         parser.exit(1, f'Build failed: {err}\n')
     print(f'{sha256(data)}  {args.output}')
 

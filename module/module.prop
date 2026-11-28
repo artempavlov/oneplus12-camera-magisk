@@ -1,6 +1,6 @@
 id=pjd110_camera2_raw50
 name=OnePlus 12 Camera — Aux, Dual RAW, 8K & 480 fps
-version=5.0
-versionCode=5
+version=6.0
+versionCode=6
 author=PJD110 Camera Research
-description=Camera2 auxiliary lenses, 12.6/50 MP RAW up to ISO 6400, 8K24 and 2048x1152 at 480 fps. For PJD110_16.0.2.400(CN01).
+description=Camera2 modes for PJD110 CN01; expanded RAW requires the stock camera photo fix scoped in Vector.
